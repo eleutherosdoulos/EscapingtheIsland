@@ -1,0 +1,119 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Escaping the Island</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/foundation.css" />
+    <link rel="stylesheet" href="css/app.css">
+    <script src="js/vendor/modernizr.js"></script>
+  </head>
+  <body>
+
+    <div class="contain-to-grid">
+      <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+          <li class="name active">
+            <h1><a href="index.html">Home</a></h1>
+          </li>
+           <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+          <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+        </ul>
+
+        <section class="top-bar-section">
+          <!-- Right Nav Section -->
+          <ul class="right">
+            <li><a href="resources.html">Heat Island Resources</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+
+          <!-- Left Nav Section -->
+          <ul class="left">
+            <li><a href="enterdata.html">Enter Tree Canopy Data</a></li>
+          </ul>
+        </section>
+      </nav>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Escaping the Island</h1>
+        <h3>Helping to Measure and Restore Louisville's Urban Tree Canopy</h3>
+      </div>
+    </div>
+    
+
+      <div id="map">
+      </div>
+
+
+
+  
+
+    <script>
+
+      var map;
+      
+      var image = {
+        url: 'treeicon.png',
+        size: new google.maps.Size(20, 32)
+      };
+
+      function initMap() {
+
+          $.get(
+          "https://spreadsheets.google.com/feeds/list/KEYFORYOURSPREADSHEETHERE",
+          function (data, status){
+
+            var treeData = data;
+
+            console.log(treeData.feed.entry.length);
+
+            map = new google.maps.Map(document.getElementById('map'), {
+              center: {lat: 38.2445277, lng: -85.6372561},
+              zoom: 19
+            });
+
+            for(var i=0; i<=treeData.feed.entry.length; i++){
+              var coordinates = {lat: parseFloat(treeData.feed.entry[i].gsx$latitude.$t), lng: parseFloat(treeData.feed.entry[i].gsx$longitude.$t)};
+              var radius = parseFloat(treeData.feed.entry[i].gsx$shaderadius.$t)/100;
+              var area = radius*radius*3.14159;
+
+
+              var marker = new google.maps.Marker({
+                position: coordinates, 
+                map: map,
+                icon: "treeiconShrunk.png",
+                title: "Tree Radius: " + radius + " meters | " + "Shade Area: " + area.toFixed(2) + " square meters | " + "Posted by " + treeData.feed.entry[i].gsx$username.$t + "."
+              });
+
+              var cityCircle = new google.maps.Circle({
+                strokeColor: '#669933',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#669933',
+                fillOpacity: 0.35,
+                map: map,
+                center: coordinates,
+                radius: radius
+              });
+
+            }//ends for loop
+          }//ends json callback
+        );//ends get
+
+      }//ends initMap
+
+    </script>
+  
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEYHERE&callback=initMap"async defer></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+    <script src="js/vendor/jquery.js"></script>
+    <script src="js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+  </body>
+</html>

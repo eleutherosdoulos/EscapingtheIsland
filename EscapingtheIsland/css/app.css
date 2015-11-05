@@ -1,0 +1,18 @@
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+      
+#map {
+  height: 100%;
+  margin-left: 10%;
+  margin-right: 10%;
+  max-width: none;
+}
+
+iframe {
+	display:block;
+	margin:auto;
+}
